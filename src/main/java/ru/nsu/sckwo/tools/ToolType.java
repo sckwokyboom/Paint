@@ -4,7 +4,7 @@ public enum ToolType {
     PEN,
     LINE,
     STAR,
-    REGULAR,
+    POLYGON,
     ERASER,
     FILL
 }

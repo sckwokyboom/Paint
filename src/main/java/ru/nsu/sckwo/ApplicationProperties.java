@@ -3,6 +3,7 @@ package ru.nsu.sckwo;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
+import java.util.Locale;
 
 public record ApplicationProperties(
         @NotNull
@@ -11,6 +12,8 @@ public record ApplicationProperties(
         Dimension windowSize,
         @NotNull
         Dimension minimumWindowSize,
-        int defaultCloseOperation
+        int defaultCloseOperation,
+        @NotNull
+        Locale locale
 ) {
 }
