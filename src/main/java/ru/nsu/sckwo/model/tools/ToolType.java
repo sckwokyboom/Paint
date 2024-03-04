@@ -1,4 +1,4 @@
-package ru.nsu.sckwo.tools;
+package ru.nsu.sckwo.model.tools;
 
 public enum ToolType {
     PEN,

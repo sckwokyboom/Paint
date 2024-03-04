@@ -1,10 +1,10 @@
-package ru.nsu.sckwo.toolbar;
+package ru.nsu.sckwo.model.toolbar;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ru.nsu.sckwo.ComponentManager;
-import ru.nsu.sckwo.IconResource;
-import ru.nsu.sckwo.StringResource;
+import ru.nsu.sckwo.model.ComponentManager;
+import ru.nsu.sckwo.model.resource.IconResource;
+import ru.nsu.sckwo.model.resource.StringResource;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,7 +16,6 @@ public class ToolBarManager {
     }
 
     private static JButton buildToolBarButton(@NotNull String id, @Nullable Icon icon, @NotNull String toolTipText, @Nullable Color background, boolean selected) {
-        // TODO: hardcode
         final Dimension size = new Dimension(52, 52);
         final JButton button = new JButton();
         button.setName(id);
@@ -28,19 +27,16 @@ public class ToolBarManager {
         button.setToolTipText(toolTipText);
         button.setBorderPainted(false);
         button.setOpaque(true);
-        //TODO: check properties
         button.setFocusPainted(false);
         return button;
     }
 
     public static JToolBar createToolBar(@NotNull Locale locale) {
         final JToolBar toolBar = new JToolBar();
-        //TODO: check parameters
         toolBar.setFloatable(false);
         toolBar.setRollover(true);
         toolBar.setVisible(true);
 
-        //TODO: think about color with icons
         List<ToolBarButtonConfig> toolBarButtonConfigList = List.of(
                 new ToolBarButtonConfig("toolbar_button_red", null, "toolbar_button_hint_red", Color.RED, false),
                 new ToolBarButtonConfig("toolbar_button_green", null, "toolbar_button_hint_green", Color.GREEN, false),
@@ -48,7 +44,7 @@ public class ToolBarManager {
                 new ToolBarButtonConfig("toolbar_button_black", null, "toolbar_button_hint_black", Color.BLACK, false),
                 new ToolBarButtonConfig("toolbar_button_palette", IconResource.PALETTE, "toolbar_button_hint_palette", null, false),
                 new ToolBarButtonConfig("toolbar_button_undo", IconResource.UNDO, "toolbar_button_hint_undo", null, false),
-//                new ToolBarButtonConfig("toolbar_button_eraser", IconResource.ERASER, "toolbar_button_hint_eraser", null, false),
+                new ToolBarButtonConfig("toolbar_button_eraser", IconResource.ERASER, "toolbar_button_hint_eraser", null, false),
                 new ToolBarButtonConfig("toolbar_button_pen", IconResource.PEN, "toolbar_button_hint_pen", null, true),
                 new ToolBarButtonConfig("toolbar_button_line", IconResource.LINE, "toolbar_button_hint_line", null, false),
                 new ToolBarButtonConfig("toolbar_button_fill", IconResource.FILL, "toolbar_button_hint_fill", null, false),
@@ -59,7 +55,6 @@ public class ToolBarManager {
         );
 
         toolBarButtonConfigList.forEach(config -> {
-            // TODO: check icons
             Icon icon = null;
             final IconResource iconRes = config.icon();
             if (iconRes != null)

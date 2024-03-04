@@ -1,4 +1,4 @@
-package ru.nsu.sckwo;
+package ru.nsu.sckwo.model.canvas;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -9,9 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ChangeHistory {
+    private static int SAVES_COUNT_LIMIT = 100;
     private final List<Raster> saves = new ArrayList<>();
     private int savesCount = 0;
-    private static int SAVES_COUNT_LIMIT = 100;
 
     public void saveImage(@NotNull Raster imageToSave) {
         if (savesCount > SAVES_COUNT_LIMIT) {

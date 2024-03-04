@@ -1,4 +1,4 @@
-package ru.nsu.sckwo;
+package ru.nsu.sckwo.model.resource;
 
 import org.jetbrains.annotations.NotNull;
 

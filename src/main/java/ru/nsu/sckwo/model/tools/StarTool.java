@@ -1,4 +1,4 @@
-package ru.nsu.sckwo.tools;
+package ru.nsu.sckwo.model.tools;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -8,10 +8,11 @@ import static java.lang.Math.sin;
 
 public class StarTool {
     private int outerRadius = 50;
+
     private int innerRadius = 25;
+
     private int angle = 0;
     private int angleCount = 5;
-
     public StarTool(int outerRadius, int innerRadius, int angle, int angleCount) {
         this.outerRadius = outerRadius;
         this.innerRadius = innerRadius;
@@ -39,5 +40,21 @@ public class StarTool {
         }
         g2d.setColor(color);
         g2d.drawPolygon(xCoords, yCoords, angleCount * 2);
+    }
+
+    public int getOuterRadius() {
+        return outerRadius;
+    }
+
+    public int getInnerRadius() {
+        return innerRadius;
+    }
+
+    public int getAngle() {
+        return angle;
+    }
+
+    public int getAngleCount() {
+        return angleCount;
     }
 }

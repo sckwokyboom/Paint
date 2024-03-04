@@ -1,6 +1,8 @@
-package ru.nsu.sckwo;
+package ru.nsu.sckwo.model.dialogues;
 
 import org.jetbrains.annotations.NotNull;
+import ru.nsu.sckwo.ApplicationContext;
+import ru.nsu.sckwo.model.resource.StringResource;
 
 import javax.swing.*;
 
@@ -15,7 +17,6 @@ public class InstructionDialog extends JDialog {
         final JScrollPane scrollPane = new JScrollPane(textPane);
         getContentPane().add(scrollPane);
         setSize(400, 400);
-        //TODO: check
         setLocationRelativeTo(parentFrame);
 
 

@@ -1,8 +1,8 @@
-package ru.nsu.sckwo.toolbar;
+package ru.nsu.sckwo.model.toolbar;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ru.nsu.sckwo.IconResource;
+import ru.nsu.sckwo.model.resource.IconResource;
 
 import java.awt.*;
 

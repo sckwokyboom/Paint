@@ -1,8 +1,9 @@
-package ru.nsu.sckwo;
+package ru.nsu.sckwo.model.canvas;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ru.nsu.sckwo.tools.*;
+import ru.nsu.sckwo.model.dialogues.OptionsValues;
+import ru.nsu.sckwo.model.tools.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -19,33 +20,19 @@ public class DrawField extends JPanel implements MouseListener, MouseMotionListe
 
     private int minWidth = DEFAULT_MIN_WIDTH;
     private int minHeight = DEFAULT_MIN_HEIGHT;
-
     private int thickness = DEFAULT_THICKNESS;
-
-    @NotNull
-    public BufferedImage getImage() {
-        assert (image != null);
-        return image;
-    }
 
     @Nullable
     private BufferedImage image = null;
-
     @Nullable
     private Graphics2D g2d = null;
-    @NotNull
-    private ToolType curToolType = ToolType.PEN;
-
-    public void setCurrentColor(@NotNull Color currentColor) {
-        this.currentColor = currentColor;
-    }
 
     @NotNull
     private Color currentColor = Color.BLACK;
-
+    @NotNull
+    private ToolType curToolType = ToolType.PEN;
     @NotNull
     private final LineTool lineTool = new LineTool();
-
     @NotNull
     private final FillTool fillTool = new FillTool();
     @NotNull
@@ -54,20 +41,26 @@ public class DrawField extends JPanel implements MouseListener, MouseMotionListe
     private PolygonTool polygonTool = new PolygonTool();
     @Nullable
     private Point startPoint = null;
-
-    // TODO: maybe not?
-
     @NotNull
     private Point prevPoint = new Point(-1, -1);
-
     @NotNull
     private final ChangeHistory changeHistory = new ChangeHistory();
 
-    DrawField() {
+    public DrawField() {
         initializeImage();
         addMouseListener(this);
         addMouseMotionListener(this);
         changeHistory.saveImage(image.getData());
+    }
+
+    @NotNull
+    public BufferedImage getImage() {
+        assert (image != null);
+        return image;
+    }
+
+    public void setCurrentColor(@NotNull Color currentColor) {
+        this.currentColor = currentColor;
     }
 
     private void initializeImage() {
@@ -96,7 +89,6 @@ public class DrawField extends JPanel implements MouseListener, MouseMotionListe
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        // TODO: возможно, добавить логгер
         System.out.println("click actionListener : id=" + e.getID() + ", x=" + e.getX() + ", y=" + e.getY());
     }
 
@@ -111,14 +103,21 @@ public class DrawField extends JPanel implements MouseListener, MouseMotionListe
                 g2d.setColor(currentColor);
                 g2d.fillOval(e.getX() - thickness / 2, e.getY() - thickness / 2, thickness, thickness);
             }
+
+            case ToolType.ERASER -> {
+                prevPoint = e.getPoint();
+                assert g2d != null;
+                g2d.setColor(Color.WHITE);
+                g2d.fillOval(e.getX() - thickness / 2, e.getY() - thickness / 2, thickness, thickness);
+            }
+
             case ToolType.FILL -> {
                 assert (image != null);
-                // TODO: exception???
                 fillTool.fill(image, e.getPoint(), currentColor);
             }
+
             case ToolType.LINE -> {
                 assert (image != null);
-                // TODO: exception???
                 if (startPoint == null) {
                     startPoint = e.getPoint();
                 } else {
@@ -130,13 +129,11 @@ public class DrawField extends JPanel implements MouseListener, MouseMotionListe
 
             case ToolType.POLYGON -> {
                 assert (image != null);
-                // TODO: exception???
                 polygonTool.draw(image, e.getPoint(), currentColor);
             }
 
             case ToolType.STAR -> {
                 assert (image != null);
-                // TODO: exception???
                 starTool.draw(image, e.getPoint(), currentColor);
             }
             default -> {
@@ -149,7 +146,6 @@ public class DrawField extends JPanel implements MouseListener, MouseMotionListe
     @Override
     public void mouseReleased(MouseEvent e) {
         assert (image != null);
-        //TODO: exception?
         if (curToolType != ToolType.LINE || startPoint == null) {
             changeHistory.saveImage(image.getData());
         }
@@ -157,7 +153,7 @@ public class DrawField extends JPanel implements MouseListener, MouseMotionListe
 
     @Override
     public void mouseEntered(MouseEvent e) {
-
+        prevPoint = e.getPoint();
     }
 
     @Override
@@ -173,7 +169,16 @@ public class DrawField extends JPanel implements MouseListener, MouseMotionListe
             assert g2d != null;
             g2d.setColor(currentColor);
             g2d.fillOval(e.getX() - thickness / 2, e.getY() - thickness / 2, thickness, thickness);
-            //TODO: cap round??? stroke??? join round???
+            g2d.setStroke(new BasicStroke(thickness, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+            g2d.drawLine(prevPoint.x, prevPoint.y, e.getX(), e.getY());
+            prevPoint = e.getPoint();
+            repaint();
+        }
+
+        if (curToolType == ToolType.ERASER) {
+            assert g2d != null;
+            g2d.setColor(Color.WHITE);
+            g2d.fillOval(e.getX() - thickness / 2, e.getY() - thickness / 2, thickness, thickness);
             g2d.setStroke(new BasicStroke(thickness, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
             g2d.drawLine(prevPoint.x, prevPoint.y, e.getX(), e.getY());
             prevPoint = e.getPoint();
@@ -183,7 +188,6 @@ public class DrawField extends JPanel implements MouseListener, MouseMotionListe
 
     @Override
     public void mouseMoved(MouseEvent e) {
-
     }
 
     public void setThickness(int thickness) {
@@ -192,18 +196,17 @@ public class DrawField extends JPanel implements MouseListener, MouseMotionListe
 
     public void setImage(@NotNull BufferedImage newImage) {
         image = newImage;
+        changeHistory.saveImage(image.getData());
     }
 
     public void resizeImage(int newWidth, int newHeight) {
         minWidth = newWidth;
         minHeight = newHeight;
         setPreferredSize(new Dimension(newWidth, newHeight));
-
-        //TODO: read about buffered image and raster
+        setSize(new Dimension(newWidth, newHeight));
         final BufferedImage newImage = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_RGB);
         this.g2d = newImage.createGraphics();
         clearAll();
-        // TODO: think about it
         assert (image != null);
         newImage.setData(image.getData());
         image = newImage;
@@ -212,7 +215,6 @@ public class DrawField extends JPanel implements MouseListener, MouseMotionListe
     }
 
     public void resetAllToolsStates() {
-        //TODO: maybe rename???
         startPoint = null;
     }
 
@@ -221,7 +223,6 @@ public class DrawField extends JPanel implements MouseListener, MouseMotionListe
         if (lastSave != null) {
             clearAll();
             assert (image != null);
-            //TODO: exception?
             image.setData(lastSave);
             repaint();
         }
@@ -230,5 +231,16 @@ public class DrawField extends JPanel implements MouseListener, MouseMotionListe
     public void setFiguresParameters(int angle, int numOfVertices, int outerRadius, int innerRadius) {
         polygonTool = new PolygonTool(outerRadius, angle, numOfVertices);
         starTool = new StarTool(outerRadius, innerRadius, angle, numOfVertices);
+    }
+
+    @NotNull
+    public OptionsValues getCurrentOptionsValues() {
+        return new OptionsValues(
+                thickness,
+                polygonTool.getAngleCount(),
+                polygonTool.getAngle(),
+                starTool.getOuterRadius(),
+                starTool.getInnerRadius()
+        );
     }
 }

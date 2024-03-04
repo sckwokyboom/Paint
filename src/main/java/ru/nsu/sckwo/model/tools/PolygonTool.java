@@ -1,4 +1,4 @@
-package ru.nsu.sckwo.tools;
+package ru.nsu.sckwo.model.tools;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -11,9 +11,10 @@ import static java.lang.Math.sin;
 public class PolygonTool {
 
     private int radius = 10;
-    private int angle = 0;
-    private int angleCount = 5;
 
+    private int angle = 0;
+
+    private int angleCount = 5;
     public PolygonTool(int radius, int angle, int angleCount) {
         this.radius = radius;
         this.angle = angle;
@@ -32,7 +33,6 @@ public class PolygonTool {
     private int[] getXCoords(@NotNull Point center) {
         int[] xCoords = new int[angleCount];
         for (int i = 0; i < angleCount; i++) {
-            // TODO: check
             xCoords[i] = (int) (center.x + radius * cos(Math.toRadians(-90.0 - angle + (360.0 / angleCount) * i)));
         }
         return xCoords;
@@ -44,5 +44,17 @@ public class PolygonTool {
             yCoords[i] = (int) (center.y + radius * sin(Math.toRadians(-90.0 - angle + (360.0 / angleCount) * i)));
         }
         return yCoords;
+    }
+
+    public int getRadius() {
+        return radius;
+    }
+
+    public int getAngle() {
+        return angle;
+    }
+
+    public int getAngleCount() {
+        return angleCount;
     }
 }

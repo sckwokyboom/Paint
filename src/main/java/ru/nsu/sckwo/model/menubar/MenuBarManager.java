@@ -1,11 +1,13 @@
-package ru.nsu.sckwo.menubar;
+package ru.nsu.sckwo.model.menubar;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ru.nsu.sckwo.ComponentManager;
-import ru.nsu.sckwo.StringResource;
+import ru.nsu.sckwo.model.ComponentManager;
+import ru.nsu.sckwo.model.resource.StringResource;
 
 import javax.swing.*;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.util.List;
 import java.util.Locale;
 
@@ -45,12 +47,12 @@ public class MenuBarManager {
         menuBar.add(fileMenu);
 
         List<MenuItemConfig> toolMenuItems = List.of(
-                new MenuItemConfig("menu_tools_button_pen", "menu_tools_button_pen", null, true, false),
+                new MenuItemConfig("menu_tools_button_pen", "menu_tools_button_pen", null, true, true),
                 new MenuItemConfig("menu_tools_button_line", "menu_tools_button_line", null, true, false),
                 new MenuItemConfig("menu_tools_button_polygon", "menu_tools_button_polygon", null, true, false),
                 new MenuItemConfig("menu_tools_button_star", "menu_tools_button_star", null, true, false),
                 new MenuItemConfig("menu_tools_button_fill", "menu_tools_button_fill", null, true, false),
-//                new MenuItemConfig("menu_tools_button_eraser", "menu_tools_button_eraser", null, true, false),
+                new MenuItemConfig("menu_tools_button_eraser", "menu_tools_button_eraser", null, true, false),
                 new MenuItemConfig("menu_tools_button_clear", "menu_tools_button_clear", null, false, false)
         );
         final ButtonGroup toolsGroup = new ButtonGroup();
@@ -75,7 +77,7 @@ public class MenuBarManager {
         );
         menuBar.add(settingsMenu);
 
-        // about
+        // About
         final List<MenuItemConfig> aboutMenuItems = List.of(
                 new MenuItemConfig("menu_about_button_about", "menu_about_button_about", null, false, false),
                 new MenuItemConfig("menu_about_button_author", "menu_about_button_author", null, false, false)
@@ -88,20 +90,87 @@ public class MenuBarManager {
         );
         menuBar.add(aboutMenu);
 
-        // resize
+        // Resize dialogue
         final JPanel resizeDialogue = new JPanel();
         final SpinnerNumberModel widthModel = new SpinnerNumberModel(640, 100, 10000, 1);
-        final JSpinner widthField = new JSpinner(widthModel);
+        final JSpinner widthFieldSpinner = new JSpinner(widthModel);
+        widthFieldSpinner.addChangeListener(e -> {
+            int value = (int) widthFieldSpinner.getValue();
+            if (value < 100 || value > 10000) {
+                JOptionPane.showMessageDialog(null, "Incorrect value! Enter a value between 100 and 10000.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
+        JComponent widthEditor = widthFieldSpinner.getEditor();
+        JFormattedTextField widthTextField = ((JSpinner.DefaultEditor) widthEditor).getTextField();
+
+        widthTextField.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                int value;
+                try {
+                    value = Integer.parseInt(widthTextField.getText());
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(null, "Incorrect value, non integer! Enter a value between 100 and 10000.", "Error", JOptionPane.ERROR_MESSAGE);
+                    value = (Integer) widthModel.getMinimum();
+                }
+
+                int min = (Integer) widthModel.getMinimum();
+                int max = (Integer) widthModel.getMaximum();
+
+                if (value < min || value > max) {
+                    JOptionPane.showMessageDialog(null, "Incorrect value! Enter a value between 100 and 10000.", "Error", JOptionPane.ERROR_MESSAGE);
+                    value = min;
+                }
+
+                widthFieldSpinner.setValue(value);
+            }
+        });
+
+
         final SpinnerNumberModel heightModel = new SpinnerNumberModel(480, 100, 10000, 1);
-        final JSpinner heightField = new JSpinner(heightModel);
+        final JSpinner heightFieldSpinner = new JSpinner(heightModel);
+        JComponent heightEditor = heightFieldSpinner.getEditor();
+        JFormattedTextField heightTextField = ((JSpinner.DefaultEditor) heightEditor).getTextField();
+
+        heightTextField.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                int value;
+                try {
+                    value = Integer.parseInt(heightTextField.getText());
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(null, "Incorrect value, non integer! Enter a value between 100 and 10000.", "Error", JOptionPane.ERROR_MESSAGE);
+                    value = (Integer) heightModel.getMinimum();
+                }
+
+                int min = (Integer) heightModel.getMinimum();
+                int max = (Integer) heightModel.getMaximum();
+
+                if (value < min || value > max) {
+                    JOptionPane.showMessageDialog(null, "Incorrect value! Enter a value between 100 and 10000.", "Error", JOptionPane.ERROR_MESSAGE);
+                    value = min;
+                }
+
+                heightFieldSpinner.setValue(value);
+            }
+        });
         resizeDialogue.add(new JLabel(StringResource.loadString("dialogue_resize_button_width", locale)));
-        resizeDialogue.add(widthField);
+        resizeDialogue.add(widthFieldSpinner);
         resizeDialogue.add(new JLabel(StringResource.loadString("dialogue_resize_button_height", locale)));
-        resizeDialogue.add(heightField);
+        resizeDialogue.add(heightFieldSpinner);
         resizeDialogue.setName("dialogue_resize");
         ComponentManager.INSTANCE.register(resizeDialogue);
 
         return menuBar;
     }
-
 }
+

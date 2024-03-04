@@ -1,16 +1,18 @@
-package ru.nsu.sckwo;
+package ru.nsu.sckwo.model.dialogues;
 
 import org.jetbrains.annotations.NotNull;
+import ru.nsu.sckwo.ApplicationContext;
+import ru.nsu.sckwo.model.resource.StringResource;
 
 import javax.swing.*;
 import java.awt.*;
-public class OptionsPanel extends JPanel {
-    private final JSlider penSizeSlider;
 
+public class OptionsPanel extends JPanel {
+    private final JSlider thicknessSlider;
     private final JSlider vertexSlider;
     private final JSlider angleSlider;
-    private final JSlider externalRadiusSlider;
-    private final JSlider internalRadiusSlider;
+    private final JSlider outerRadiusSlider;
+    private final JSlider innerRadiusSlider;
     private final JSpinner penSizeSpinner;
 
     private final JSpinner vertexSpinner;
@@ -18,25 +20,20 @@ public class OptionsPanel extends JPanel {
     private final JSpinner externalRadiusSpinner;
     private final JSpinner internalRadiusSpinner;
 
-    OptionsPanel(@NotNull ApplicationContext context) {
-        // TODO: fix hardcode
-        setPreferredSize(new Dimension(600, 400));
-        //TODO: some other layout???
+    public OptionsPanel(@NotNull ApplicationContext context) {
         setLayout(new GridBagLayout());
         final GridBagConstraints gbc = new GridBagConstraints();
 
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        // TODO: fix hardcode
         gbc.insets = new Insets(2, 2, 2, 2);
 
         addComponent(new JLabel(StringResource.loadString("dialogue_options_label_pen_size", context.properties().locale())), 0, 0, 1, gbc);
-        penSizeSlider = createSlider(1, 20, 5, 1);
-        addComponent(penSizeSlider, 0, 1, 1, gbc);
-        // TODO: fix hardcode
+        thicknessSlider = createSlider(1, 20, 5, 1);
+        addComponent(thicknessSlider, 0, 1, 1, gbc);
         // Pen
         penSizeSpinner = createSpinner(new SpinnerNumberModel(5, 1, 20, 1), 0, 2, gbc);
         penSizeSpinner.setToolTipText("[1-20]");
-        penSizeSlider.setToolTipText("[1-20]");
+        thicknessSlider.setToolTipText("[1-20]");
 
         // Polygon
         addComponent(new JLabel(StringResource.loadString("dialogue_options_label_regular_vertices_number", context.properties().locale())), 1, 0, 1, gbc);
@@ -56,19 +53,19 @@ public class OptionsPanel extends JPanel {
 
         // External radius
         addComponent(new JLabel(StringResource.loadString("dialogue_options_label_outer_radius", context.properties().locale())), 3, 0, 1, gbc);
-        externalRadiusSlider = createSlider(0, 100, 50, 1);
-        addComponent(externalRadiusSlider, 3, 1, 1, gbc);
+        outerRadiusSlider = createSlider(0, 100, 50, 1);
+        addComponent(outerRadiusSlider, 3, 1, 1, gbc);
         externalRadiusSpinner = createSpinner(new SpinnerNumberModel(50, 0, 100, 1), 3, 2, gbc);
         externalRadiusSpinner.setToolTipText("[0-100]");
-        externalRadiusSlider.setToolTipText("[0-100]");
+        outerRadiusSlider.setToolTipText("[0-100]");
 
         // Internal radius
         addComponent(new JLabel(StringResource.loadString("dialogue_options_label_inner_radius", context.properties().locale())), 4, 0, 1, gbc);
-        internalRadiusSlider = createSlider(0, 50, 20, 1);
-        addComponent(internalRadiusSlider, 4, 1, 1, gbc);
+        innerRadiusSlider = createSlider(0, 50, 20, 1);
+        addComponent(innerRadiusSlider, 4, 1, 1, gbc);
         internalRadiusSpinner = createSpinner(new SpinnerNumberModel(20, 0, 100, 1), 4, 2, gbc);
         internalRadiusSpinner.setToolTipText("[0,100]");
-        internalRadiusSlider.setToolTipText("[0,100]");
+        innerRadiusSlider.setToolTipText("[0,100]");
         setupAllChangeListeners();
     }
 
@@ -79,10 +76,7 @@ public class OptionsPanel extends JPanel {
         return slider;
     }
 
-    // TODO: rename parameters
-
     private void addComponent(@NotNull Component component, int row, int col, int width, @NotNull GridBagConstraints gbc) {
-        // TODO: check fields
         gbc.gridx = col;
         gbc.gridy = row;
         gbc.gridwidth = width;
@@ -90,9 +84,7 @@ public class OptionsPanel extends JPanel {
     }
 
     private JSpinner createSpinner(@NotNull SpinnerModel model, int row, int col, @NotNull GridBagConstraints gbc) {
-        //TODO: check model
         final JSpinner spinner = new JSpinner(model);
-        // TODO: think about width parameter (1)
         addComponent(spinner, row, col, 1, gbc);
         return spinner;
     }
@@ -108,11 +100,11 @@ public class OptionsPanel extends JPanel {
     }
 
     private void setupAllChangeListeners() {
-        setupChangeListener(penSizeSlider, penSizeSpinner);
+        setupChangeListener(thicknessSlider, penSizeSpinner);
         setupChangeListener(vertexSlider, vertexSpinner);
         setupChangeListener(angleSlider, angleSpinner);
-        setupChangeListener(internalRadiusSlider, internalRadiusSpinner);
-        setupExternalRadiusChangeListener(externalRadiusSlider, externalRadiusSpinner, internalRadiusSpinner, internalRadiusSlider);
+        setupChangeListener(innerRadiusSlider, internalRadiusSpinner);
+        setupExternalRadiusChangeListener(outerRadiusSlider, externalRadiusSpinner, internalRadiusSpinner, innerRadiusSlider);
     }
 
     private void setupExternalRadiusChangeListener(@NotNull JSlider slider, @NotNull JSpinner spinner, @NotNull JSpinner internalRadiusSpinner, @NotNull JSlider internalRadiusSlider) {
@@ -135,9 +127,16 @@ public class OptionsPanel extends JPanel {
         });
     }
 
+    public void resetValues(@NotNull OptionsValues options) {
+        thicknessSlider.setValue(options.thickness());
+        angleSlider.setValue(options.figureRotationAngle());
+        vertexSlider.setValue(options.numberOfFigureVertices());
+        outerRadiusSlider.setValue(options.outerRadius());
+        innerRadiusSlider.setValue(options.innerRadius());
+    }
 
-    public int getPenSize() {
-        return penSizeSlider.getValue();
+    public int getThickness() {
+        return thicknessSlider.getValue();
     }
 
     public int getNumOfVertices() {
@@ -149,10 +148,10 @@ public class OptionsPanel extends JPanel {
     }
 
     public int getOuterRadius() {
-        return externalRadiusSlider.getValue();
+        return outerRadiusSlider.getValue();
     }
 
     public int getInnerRadius() {
-        return internalRadiusSlider.getValue();
+        return innerRadiusSlider.getValue();
     }
 }

@@ -1,4 +1,4 @@
-package ru.nsu.sckwo;
+package ru.nsu.sckwo.model.resource;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -23,7 +23,6 @@ public enum IconResource {
     }
 
     public ImageIcon loadIcon() {
-        // TODO: change icons
         assert (IconResource.class.getResource(path) != null);
         return new ImageIcon(Objects.requireNonNull(IconResource.class.getResource(path)));
     }

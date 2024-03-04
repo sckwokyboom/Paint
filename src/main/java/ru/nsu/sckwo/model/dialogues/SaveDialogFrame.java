@@ -1,6 +1,7 @@
-package ru.nsu.sckwo;
+package ru.nsu.sckwo.model.dialogues;
 
 import org.jetbrains.annotations.NotNull;
+import ru.nsu.sckwo.model.canvas.DrawField;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -11,22 +12,15 @@ import java.io.IOException;
 public class SaveDialogFrame extends JFrame {
     private final DrawField drawField;
 
-    SaveDialogFrame(@NotNull DrawField drawField) {
-        // TODO: bounds? visible?
+    public SaveDialogFrame(@NotNull DrawField drawField) {
         this.drawField = drawField;
     }
 
     public void saveImage() throws IOException {
-        // TODO: string resource
         final FileDialog saveDialog = new FileDialog(this, "Save image", FileDialog.SAVE);
         saveDialog.setVisible(true);
-        // TODO: сделать остальные расширения и выбор
         final String fileName = saveDialog.getDirectory() + saveDialog.getFile() + ".png";
-
         final File image = new File(fileName);
         ImageIO.write(drawField.getImage(), "png", image);
-//        System.out.println(image.toPath());
-        // TODO: save image does not work :(
-        System.out.println("SAVE!!!");
     }
 }

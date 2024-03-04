@@ -1,6 +1,8 @@
-package ru.nsu.sckwo;
+package ru.nsu.sckwo.model.dialogues;
 
 import org.jetbrains.annotations.NotNull;
+import ru.nsu.sckwo.model.canvas.DrawField;
+import ru.nsu.sckwo.model.resource.StringResource;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -8,21 +10,22 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Locale;
 
 public class LoadDialogFrame extends JFrame {
     @NotNull
     private final DrawField drawField;
 
     @NotNull
-    private final ApplicationContext context;
+    private final Locale locale;
 
-    LoadDialogFrame(@NotNull DrawField drawField, @NotNull ApplicationContext context) {
+    public LoadDialogFrame(@NotNull DrawField drawField, @NotNull Locale locale) {
         this.drawField = drawField;
-        this.context = context;
+        this.locale = locale;
     }
 
     public void loadImage() throws IOException {
-        final FileDialog loadDialog = new FileDialog(this, StringResource.loadString("dialogue_load_file_title", context.properties().locale()), FileDialog.LOAD);
+        final FileDialog loadDialog = new FileDialog(this, StringResource.loadString("dialogue_load_file_title", locale), FileDialog.LOAD);
         loadDialog.setFile("*.png; *.jpg; *.jpeg; *.gif; *.bmp");
         loadDialog.setVisible(true);
 
@@ -33,8 +36,8 @@ public class LoadDialogFrame extends JFrame {
         if (imageFile.exists()) {
             if (!imageFile.canRead()) {
                 JOptionPane.showMessageDialog(this,
-                        StringResource.loadString("dialogue_error_loadImage", context.properties().locale()),
-                        StringResource.loadString("dialogue_error_loadImage_title", context.properties().locale()),
+                        StringResource.loadString("dialogue_error_loadImage", locale),
+                        StringResource.loadString("dialogue_error_loadImage_title", locale),
                         JOptionPane.ERROR_MESSAGE);
                 return;
             }
@@ -42,8 +45,8 @@ public class LoadDialogFrame extends JFrame {
             System.out.println(imageFile);
             if (loadedImage == null) {
                 JOptionPane.showMessageDialog(this,
-                        StringResource.loadString("dialogue_error_loadImage", context.properties().locale()),
-                        StringResource.loadString("dialogue_error_loadImage_title", context.properties().locale()),
+                        StringResource.loadString("dialogue_error_loadImage", locale),
+                        StringResource.loadString("dialogue_error_loadImage_title", locale),
                         JOptionPane.ERROR_MESSAGE);
                 return;
             }

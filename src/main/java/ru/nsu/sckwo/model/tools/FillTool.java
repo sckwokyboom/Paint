@@ -1,4 +1,4 @@
-package ru.nsu.sckwo.tools;
+package ru.nsu.sckwo.model.tools;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -17,7 +17,6 @@ public class FillTool {
     private Graphics2D g2d = null;
     private int newColor = 0;
     private int oldColor = 0;
-    // TODO: ???
     private int maxUpX = 0;
 
     private int maxDownX = 0;
@@ -32,13 +31,11 @@ public class FillTool {
     private Point findSpanStart(@NotNull Point seed) {
         final Point newSpanStart = new Point(seed);
         if (image == null) {
-            //TODO: think about exception
-            throw new IllegalStateException("");
+            throw new IllegalStateException("Null image.");
         }
         while (newSpanStart.x >= 0 && image.getRGB(newSpanStart.x, newSpanStart.y) == oldColor) {
             newSpanStart.x--;
         }
-        //TODO: maybe change while?
         newSpanStart.x++;
         return newSpanStart;
     }
@@ -47,21 +44,18 @@ public class FillTool {
     private Point findSpanEnd(@NotNull Point seed) {
         final Point newSpanEnd = new Point(seed);
         if (image == null) {
-            //TODO: think about exception
-            throw new IllegalStateException("");
+            throw new IllegalStateException("Null image.");
         }
         while (newSpanEnd.x < image.getWidth() && image.getRGB(newSpanEnd.x, newSpanEnd.y) == oldColor) {
             newSpanEnd.x++;
         }
-        //TODO: maybe change while?
         newSpanEnd.x--;
         return newSpanEnd;
     }
 
     private void findNewSpan(@NotNull Point point) {
         if (image == null) {
-            //TODO: think about exception
-            throw new IllegalStateException("");
+            throw new IllegalStateException("Null image");
         }
         if ((point.y - 1) >= 0 && (point.y + 1) < image.getHeight()) {
             if (point.x > maxUpX && image.getRGB(point.x, point.y + 1) == oldColor) {
@@ -78,8 +72,7 @@ public class FillTool {
     private void startFilling() {
         final Span curSpan = spanStack.pop();
         if (g2d == null) {
-            //TODO: think about exception
-            throw new IllegalStateException("");
+            throw new IllegalStateException("Null image");
         }
         g2d.setColor(new Color(newColor));
         g2d.drawLine(curSpan.spanStart().x, curSpan.spanStart().y, curSpan.spanEnd().x, curSpan.spanEnd().y);
